@@ -1,0 +1,24 @@
+name: PluginList
+main: com.daemitus.pluginlist.PluginList
+version: 1.0
+author: daemitus
+description: Plugin hiding and faking for /pl /plugins, with super perms support for usage of the previous and /version /ver
+commands:
+    pluginlist:
+        description: Display the plugin list.
+permissions:
+    pluginlist.user:
+        description: Grants usage of /plugins or /pl
+        default: true
+    pluginlist.version:
+        description: Grants usage of /version or /ver
+        default: op
+    pluginlist.hidden:
+        description: Grants access to hidden plugins
+        default: op
+    pluginlist.*:
+        default: op
+        children:
+            pluginlist.user: true
+            pluginlist.hidden: true
+            pluginlist.version: true
