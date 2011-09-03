@@ -13,8 +13,8 @@ permissions:
     pluginlist.version:
         description: Grants usage of /version or /ver
         default: op
-    pluginlist.hidden:
-        description: Grants access to hidden plugins
+    pluginlist.real:
+        description: Grants access to the true /plugins
         default: op
     pluginlist.*:
         default: op
