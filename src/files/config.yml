@@ -1,7 +1,7 @@
 hidden: []
 faked: []
-# Options:
-# RED     DARK_RED  
+# OPTIONS ARE CASE SENSITIVE
+# RED     DARK_RED
 # AQUA    DARK_AQUA
 # BLUE    DARK_BLUE
 # GRAY    DARK_GRAY
@@ -9,8 +9,8 @@ faked: []
 # WHITE   BLACK
 # YELLOW  GOLD
 # LIGHT_PURPLE  DARK_PURPLE
-ColorFaked: "YELLOW"
-ColorHidden: "GOLD"
-ColorEnabled: "GREEN"
-ColorDisabled: "RED"
-ColorDefault: "WHITE"
+ColorFaked:     "YELLOW"
+ColorHidden:    "GOLD"
+ColorEnabled:   "GREEN"
+ColorDisabled:  "RED"
+ColorDefault:   "WHITE"
