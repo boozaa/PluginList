@@ -160,7 +160,7 @@ public class PluginList extends JavaPlugin {
 
                     player.sendMessage(message.substring(0, message.length() - 2));
                 }
-            } else if (command.equalsIgnoreCase("ver") || command.equalsIgnoreCase("version")) {
+            } else if (command.equalsIgnoreCase("ver") || command.equalsIgnoreCase("version") || command.equalsIgnoreCase("icanhasbukkit")) {
                 if (!player.hasPermission(version))
                     event.setCancelled(true);
             }
