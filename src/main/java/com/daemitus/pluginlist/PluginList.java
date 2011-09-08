@@ -36,7 +36,7 @@ public class PluginList extends JavaPlugin {
     private final String user = "pluginlist.user";
     private final String admin = "pluginlist.real";
     private final String version = "pluginlist.version";
-    private final String repo = "https://github.com/daemitus/PluginList/master/src/main/resources/files/";
+    private final String repo = "https://raw.github.com/daemitus/PluginList/master/src/main/resources/files/";
 
     public void onDisable() {
     }
