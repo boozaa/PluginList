@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.Plugin;
 import java.util.logging.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
@@ -25,9 +26,9 @@ import org.bukkit.util.config.Configuration;
 
 public class PluginList extends JavaPlugin {
 
-    public static final Logger logger = Logger.getLogger("Minecraft");
-    private final List<String> hiddenList = new ArrayList<String>();
-    private final List<String> fakedList = new ArrayList<String>();
+    public static final Logger logger = Bukkit.getServer().getLogger();
+    private final List<String> hiddenList = new ArrayList<>();
+    private final List<String> fakedList = new ArrayList<>();
     private ChatColor colorFaked = ChatColor.YELLOW;
     private ChatColor colorHidden = ChatColor.GOLD;
     private ChatColor colorEnabled = ChatColor.GREEN;
@@ -137,7 +138,7 @@ public class PluginList extends JavaPlugin {
                 if (player.hasPermission(user)) {
                     String message = colorDefault + "Plugins: ";
                     boolean viewReal = player.hasPermission(admin);
-                    List<String> output = new ArrayList<String>();
+                    List<String> output = new ArrayList<>();
                     for (Plugin pl : plugin.getServer().getPluginManager().getPlugins()) {
                         String name = pl.getDescription().getName();
                         if (hiddenList.contains(name)) {
