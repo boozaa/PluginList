@@ -27,9 +27,9 @@ import org.bukkit.util.config.Configuration;
 public class PluginList extends JavaPlugin {
 
     public static final Logger logger = Bukkit.getServer().getLogger();
-    private final List<String> hiddenList = new ArrayList<>();
-    private final List<String> fakedList = new ArrayList<>();
-    private final List<String> fakedDisabledList = new ArrayList<>();
+    private final List<String> hiddenList = new ArrayList<String>();
+    private final List<String> fakedList = new ArrayList<String>();
+    private final List<String> fakedDisabledList = new ArrayList<String>();
     private ChatColor colorFaked = ChatColor.YELLOW;
     private ChatColor colorHidden = ChatColor.GOLD;
     private ChatColor colorEnabled = ChatColor.GREEN;
@@ -40,9 +40,11 @@ public class PluginList extends JavaPlugin {
     private final String version = "pluginlist.version";
     private final String repo = "https://raw.github.com/daemitus/PluginList/master/src/main/resources/files/";
 
+    @Override
     public void onDisable() {
     }
 
+    @Override
     public void onEnable() {
         this.getServer().getPluginManager().registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new PlayerListener(this), Priority.Normal, this);
         load();
@@ -143,7 +145,7 @@ public class PluginList extends JavaPlugin {
                 if (player.hasPermission(user)) {
                     String message = colorDefault + "Plugins: ";
                     boolean viewReal = player.hasPermission(admin);
-                    List<String> output = new ArrayList<>();
+                    List<String> output = new ArrayList<String>();
                     for (Plugin pl : plugin.getServer().getPluginManager().getPlugins()) {
                         String name = pl.getDescription().getName();
                         if (hiddenList.contains(name)) {
