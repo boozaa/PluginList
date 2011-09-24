@@ -29,6 +29,7 @@ public class PluginList extends JavaPlugin {
     public static final Logger logger = Bukkit.getServer().getLogger();
     private final List<String> hiddenList = new ArrayList<>();
     private final List<String> fakedList = new ArrayList<>();
+    private final List<String> fakedDisabledList = new ArrayList<>();
     private ChatColor colorFaked = ChatColor.YELLOW;
     private ChatColor colorHidden = ChatColor.GOLD;
     private ChatColor colorEnabled = ChatColor.GREEN;
@@ -61,6 +62,10 @@ public class PluginList extends JavaPlugin {
         obj = config.getProperty("faked");
         if (obj != null)
             fakedList.addAll((ArrayList<String>) obj);
+
+        obj = config.getProperty("fakedDisabled");
+        if (obj != null)
+            fakedDisabledList.addAll((ArrayList<String>) obj);
 
         try {
             colorFaked = ChatColor.valueOf(config.getString("ColorFaked", colorFaked.name()));
@@ -151,6 +156,8 @@ public class PluginList extends JavaPlugin {
                     }
                     for (String name : fakedList)
                         output.add((viewReal ? colorFaked : colorEnabled) + name);
+                    for (String name : fakedDisabledList)
+                        output.add((viewReal ? colorFaked : colorDisabled) + name);
                     Collections.sort(output, comparator);
 
                     for (int i = 0; i < output.size(); i++)
