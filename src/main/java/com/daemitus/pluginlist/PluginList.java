@@ -4,25 +4,23 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.Plugin;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
-import org.bukkit.util.config.Configuration;
 
 public class PluginList extends JavaPlugin {
 
@@ -38,7 +36,6 @@ public class PluginList extends JavaPlugin {
     private final String user = "pluginlist.user";
     private final String admin = "pluginlist.real";
     private final String version = "pluginlist.version";
-    private final String repo = "https://raw.github.com/daemitus/PluginList/master/src/main/resources/files/";
 
     @Override
     public void onDisable() {
@@ -46,77 +43,108 @@ public class PluginList extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        hiddenList.clear();
+        fakedList.clear();
+        fakedDisabledList.clear();
+
         this.getServer().getPluginManager().registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new PlayerListener(this), Priority.Normal, this);
-        load();
+        if (!load()) {
+            this.getServer().getPluginManager().disablePlugin(this);
+            logger.log(Level.SEVERE, String.format("PluginList %1$s DISABLED", this.getDescription().getVersion()));
+        } else {
+            logger.log(Level.INFO, String.format("PluginList %1$s Enabled", this.getDescription().getVersion()));
+        }
     }
 
-    private void load() {
-        File configFile = new File(this.getDataFolder() + File.separator + "config.yml");
-        if (!configFile.exists())
-            downloadFile("config.yml");
-        Configuration config = new Configuration(configFile);
-        config.load();
-
-        Object obj = config.getList("hidden");
-        if (obj != null)
-            hiddenList.addAll((ArrayList<String>) obj);
-
-        obj = config.getProperty("faked");
-        if (obj != null)
-            fakedList.addAll((ArrayList<String>) obj);
-
-        obj = config.getProperty("fakedDisabled");
-        if (obj != null)
-            fakedDisabledList.addAll((ArrayList<String>) obj);
-
+    private boolean load() {
         try {
-            colorFaked = ChatColor.valueOf(config.getString("ColorFaked", colorFaked.name()));
-        } catch (Exception ex) {
-            PluginList.logger.log(Level.WARNING, "PluginList: ColorFaked has an invalid value");
-        }
-        try {
-            colorHidden = ChatColor.valueOf(config.getString("ColorHidden", colorHidden.name()));
-        } catch (Exception ex) {
-            PluginList.logger.log(Level.WARNING, "PluginList: ColorHidden has an invalid value");
-        }
-        try {
-            colorEnabled = ChatColor.valueOf(config.getString("ColorEnabled", colorEnabled.name()));
-        } catch (Exception ex) {
-            PluginList.logger.log(Level.WARNING, "PluginList: ColorEnabled has an invalid value");
-        }
-        try {
-            colorDisabled = ChatColor.valueOf(config.getString("ColorDisabled", colorDisabled.name()));
-        } catch (Exception ex) {
-            PluginList.logger.log(Level.WARNING, "PluginList: ColorDisabled has an invalid value");
-        }
-        try {
-            colorDefault = ChatColor.valueOf(config.getString("ColorDefault", colorDefault.name()));
-        } catch (Exception ex) {
-            PluginList.logger.log(Level.WARNING, "PluginList: ColorDefault has an invalid value");
-        }
+            File configFile = new File(this.getDataFolder() + "/config.yml");
+            if (!configFile.exists())
+                if (!getFile("config.yml"))
+                    return false;
 
-    }
+            YamlConfiguration config = new YamlConfiguration();
+            config.load(configFile);
 
-    private void downloadFile(String filename) {
-        //Southpaw018 - Cenotaph
-        if (!this.getDataFolder().exists())
-            this.getDataFolder().mkdirs();
-        String datafile = this.getDataFolder().getPath() + File.separator + filename;
-        String repofile = repo + filename;
-        try {
-            File download = new File(datafile);
-            download.createNewFile();
-            URL link = new URL(repofile);
-            ReadableByteChannel rbc = Channels.newChannel(link.openStream());
-            FileOutputStream fos = new FileOutputStream(download);
-            fos.getChannel().transferFrom(rbc, 0, 1 << 24);
-            PluginList.logger.log(Level.INFO, "PluginList: Downloaded file ".concat(datafile));
-        } catch (MalformedURLException ex) {
-            PluginList.logger.log(Level.WARNING, "PluginList: Malformed URL ".concat(repofile));
+            Object obj = config.getList("hidden");
+            if (obj != null)
+                hiddenList.addAll((ArrayList<String>) obj);
+
+            obj = config.getList("faked");
+            if (obj != null)
+                fakedList.addAll((ArrayList<String>) obj);
+
+            obj = config.getList("fakedDisabled");
+            if (obj != null)
+                fakedDisabledList.addAll((ArrayList<String>) obj);
+
+            try {
+                colorFaked = ChatColor.valueOf(config.getString("ColorFaked", colorFaked.name()));
+            } catch (Exception ex) {
+                PluginList.logger.log(Level.WARNING, "PluginList: ColorFaked has an invalid value");
+            }
+            try {
+                colorHidden = ChatColor.valueOf(config.getString("ColorHidden", colorHidden.name()));
+            } catch (Exception ex) {
+                PluginList.logger.log(Level.WARNING, "PluginList: ColorHidden has an invalid value");
+            }
+            try {
+                colorEnabled = ChatColor.valueOf(config.getString("ColorEnabled", colorEnabled.name()));
+            } catch (Exception ex) {
+                PluginList.logger.log(Level.WARNING, "PluginList: ColorEnabled has an invalid value");
+            }
+            try {
+                colorDisabled = ChatColor.valueOf(config.getString("ColorDisabled", colorDisabled.name()));
+            } catch (Exception ex) {
+                PluginList.logger.log(Level.WARNING, "PluginList: ColorDisabled has an invalid value");
+            }
+            try {
+                colorDefault = ChatColor.valueOf(config.getString("ColorDefault", colorDefault.name()));
+            } catch (Exception ex) {
+                PluginList.logger.log(Level.WARNING, "PluginList: ColorDefault has an invalid value");
+            }
+            return true;
         } catch (FileNotFoundException ex) {
-            PluginList.logger.log(Level.WARNING, "PluginList: File not found ".concat(datafile));
+            PluginList.logger.log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            PluginList.logger.log(Level.WARNING, "PluginList: IOError downloading ".concat(repofile));
+            PluginList.logger.log(Level.SEVERE, null, ex);
+        } catch (InvalidConfigurationException ex) {
+            PluginList.logger.log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    private boolean getFile(String filename) {
+        try {
+            if (!this.getDataFolder().exists())
+                this.getDataFolder().mkdirs();
+            File file = new File(this.getDataFolder().getAbsolutePath() + File.separator + filename);
+            file.createNewFile();
+
+            InputStream fis = this.getResource("files/" + filename);
+            FileOutputStream fos = new FileOutputStream(file);
+
+            try {
+                byte[] buf = new byte[1024];
+                int i = 0;
+                while ((i = fis.read(buf)) != -1) {
+                    fos.write(buf, 0, i);
+                }
+            } catch (Exception e) {
+                e.printStackTrace(System.out);
+            } finally {
+                if (fis != null) {
+                    fis.close();
+                }
+                if (fos != null) {
+                    fos.close();
+                }
+            }
+            PluginList.logger.log(Level.INFO, String.format("PluginList: Retrieved file %1$s", filename));
+            return true;
+        } catch (IOException ex) {
+            PluginList.logger.log(Level.SEVERE, String.format("PluginList: Error retrieving %1$s", filename));
+            return false;
         }
     }
 
@@ -125,8 +153,9 @@ public class PluginList extends JavaPlugin {
         private final PluginList plugin;
         private final Comparator<String> comparator = new Comparator<String>() {
 
+            @Override
             public int compare(String s1, String s2) {
-                return s1.substring(2).compareTo(s2.substring(2));
+                return s1.substring(2).toLowerCase().compareTo(s2.substring(2).toLowerCase());
             }
         };
 
@@ -148,7 +177,7 @@ public class PluginList extends JavaPlugin {
                     List<String> output = new ArrayList<String>();
                     for (Plugin pl : plugin.getServer().getPluginManager().getPlugins()) {
                         String name = pl.getDescription().getName();
-                        if (hiddenList.contains(name)) {
+                        if (hiddenList.contains(name) || hiddenList.contains("*")) {
                             if (viewReal) {
                                 output.add((pl.isEnabled() ? colorEnabled : colorDisabled) + name + " " + colorHidden + "(H)");
                             }

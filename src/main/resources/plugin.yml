@@ -1,6 +1,6 @@
 name: PluginList
 main: com.daemitus.pluginlist.PluginList
-version: 1.3
+version: 1.6
 author: daemitus
 description: Plugin hiding and faking for /pl /plugins, with super perms support for usage of the previous and /version /ver /icanhasbukkit
 commands:
