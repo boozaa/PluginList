@@ -50,18 +50,16 @@ public class PluginList extends JavaPlugin {
         this.getServer().getPluginManager().registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new PlayerListener(this), Priority.Normal, this);
         if (!load()) {
             this.getServer().getPluginManager().disablePlugin(this);
-            logger.log(Level.SEVERE, String.format("PluginList %1$s DISABLED", this.getDescription().getVersion()));
+            PluginList.logger.log(Level.SEVERE, String.format("PluginList %1$s DISABLED", this.getDescription().getVersion()));
         } else {
-            logger.log(Level.INFO, String.format("PluginList %1$s Enabled", this.getDescription().getVersion()));
+            PluginList.logger.log(Level.INFO, String.format("PluginList %1$s Enabled", this.getDescription().getVersion()));
         }
     }
 
     private boolean load() {
         try {
-            File configFile = new File(this.getDataFolder() + "/config.yml");
-            if (!configFile.exists())
-                if (!getFile("config.yml"))
-                    return false;
+            File configFile = new File(this.getDataFolder(), "config.yml");
+            checkFile(configFile);
 
             YamlConfiguration config = new YamlConfiguration();
             config.load(configFile);
@@ -114,14 +112,14 @@ public class PluginList extends JavaPlugin {
         return false;
     }
 
-    private boolean getFile(String filename) {
+    private boolean checkFile(File file) {
         try {
-            if (!this.getDataFolder().exists())
-                this.getDataFolder().mkdirs();
-            File file = new File(this.getDataFolder().getAbsolutePath() + File.separator + filename);
-            file.createNewFile();
+            if (file.exists())
+                return true;
 
-            InputStream fis = this.getResource("files/" + filename);
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+            InputStream fis = this.getResource("files/" + file.getName());
             FileOutputStream fos = new FileOutputStream(file);
 
             try {
@@ -130,8 +128,8 @@ public class PluginList extends JavaPlugin {
                 while ((i = fis.read(buf)) != -1) {
                     fos.write(buf, 0, i);
                 }
-            } catch (Exception e) {
-                e.printStackTrace(System.out);
+            } catch (IOException ex) {
+                PluginList.logger.log(Level.SEVERE, null, ex);
             } finally {
                 if (fis != null) {
                     fis.close();
@@ -140,10 +138,10 @@ public class PluginList extends JavaPlugin {
                     fos.close();
                 }
             }
-            PluginList.logger.log(Level.INFO, String.format("PluginList: Retrieved file %1$s", filename));
+            PluginList.logger.log(Level.INFO, String.format("PluginList: Retrieved file %1$s", file.getName()));
             return true;
         } catch (IOException ex) {
-            PluginList.logger.log(Level.SEVERE, String.format("PluginList: Error retrieving %1$s", filename));
+            PluginList.logger.log(Level.SEVERE, null, ex);
             return false;
         }
     }
