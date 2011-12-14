@@ -1,10 +1,12 @@
 name: PluginList
 main: com.daemitus.pluginlist.PluginList
-version: 1.6
+version: 1.7
 author: daemitus
 description: Plugin hiding and faking for /pl /plugins, with super perms support for usage of the previous and /version /ver /icanhasbukkit
 commands:
-    pluginlist:
+    plreload:
+        aliases: 
+          - plr
         description: Display the plugin list.
 permissions:
     pluginlist.user:
@@ -12,13 +14,14 @@ permissions:
         default: true
     pluginlist.version:
         description: Grants usage of /version /ver /icanhasbukkit
-        default: op
     pluginlist.real:
         description: Grants access to the true /plugins
-        default: op
+    pluginlist.reload:
+        description: Grants usage of /plreload
     pluginlist.*:
         default: op
         children:
             pluginlist.user: true
             pluginlist.hidden: true
             pluginlist.version: true
+            pluginlist.reload: true
