@@ -19,8 +19,8 @@ import org.bukkit.plugin.PluginManager;
 public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
     private final PluginList plugin;
-    private static final Pattern plPattern = Pattern.compile("^/(?i)(plugins|pl)(\\s?)(.*)$");
-    private final Pattern verPattern = Pattern.compile("^/(?i)(version|ver|icanhasbukkit)(\\s?)(.*)$");
+    private static final Pattern plPattern = Pattern.compile("^/(?i)(plugins|pl)(\\s.*)?$");
+    private final Pattern verPattern = Pattern.compile("^/(?i)(version|ver|icanhasbukkit)(\\s.*)?$");
     private final Comparator<String> comparator = new Comparator<String>() {
 
         @Override
@@ -39,7 +39,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         if (plPattern.matcher(event.getMessage()).matches()) {
             event.setCancelled(true);
             Player player = event.getPlayer();
-            boolean viewReal = hasPermission(player, Perm.admin);
+            boolean viewReal = player.hasPermission(Perm.admin);
 
             List<String> output = new ArrayList<String>();
 
@@ -73,12 +73,8 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
         } else if (verPattern.matcher(event.getMessage()).matches()) {
             Player player = event.getPlayer();
-            if (!hasPermission(player, Perm.version))
+            if (player.hasPermission(Perm.version))
                 event.setCancelled(true);
         }
-    }
-
-    private boolean hasPermission(Player player, String permission) {
-        return player.isOp() || player.hasPermission(permission);
     }
 }

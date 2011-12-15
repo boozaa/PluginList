@@ -6,8 +6,16 @@
   <artifactId>PluginList</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
+ 
   <name>PluginList</name>
-  
+  <url>https://github.com/daemitus/PluginList</url>
+
+  <scm>
+        <connection>scm:git:git://github.com/daemitus/PluginList</connection>
+        <developerConnection>scm:git:ssh://git@github.com/daemitus/PluginList.git</developerConnection>
+        <url>https://github.com/daemitus/PluginList</url>
+  </scm>
+
   <repositories>
       <repository>
           <id>bukkit-repo</id>

@@ -31,7 +31,7 @@ public class PluginList extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
-            if (sender.isOp() || sender.hasPermission(Perm.reload)) {
+            if (sender.hasPermission(Perm.reload)) {
                 reload();
                 sender.sendMessage("§c[§bPluginList§c]§f Reloaded");
             }
