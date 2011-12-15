@@ -19,8 +19,8 @@ import org.bukkit.plugin.PluginManager;
 public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
     private final PluginList plugin;
-    private static final Pattern plPattern = Pattern.compile("^/(?i)(plugins|pl)$");
-    private final Pattern verPattern = Pattern.compile("^/(?i)(version|ver|icanhasbukkit)$");
+    private static final Pattern plPattern = Pattern.compile("^/(?i)(plugins|pl)(\\s?)(.*)$");
+    private final Pattern verPattern = Pattern.compile("^/(?i)(version|ver|icanhasbukkit)(\\s?)(.*)$");
     private final Comparator<String> comparator = new Comparator<String>() {
 
         @Override
@@ -45,8 +45,9 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
             for (Plugin pl : plugin.getServer().getPluginManager().getPlugins()) {
                 String name = pl.getDescription().getName();
-                if ((Config.hideEverything || Config.hiddenList.contains(name)) && viewReal) {
-                    output.add((pl.isEnabled() ? Config.colorEnabled : Config.colorDisabled) + name + " " + Config.colorHidden + "(H)");
+                if (Config.hideEverything || Config.hiddenList.contains(name)) {
+                    if (viewReal)
+                        output.add((pl.isEnabled() ? Config.colorEnabled : Config.colorDisabled) + name + " " + Config.colorHidden + "(H)");
                 } else {
                     output.add((pl.isEnabled() ? Config.colorEnabled : Config.colorDisabled) + name);
                 }
