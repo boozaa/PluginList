@@ -4,28 +4,21 @@ version: 1.7
 author: daemitus
 description: Plugin hiding and faking for /pl /plugins, with super perms support for usage of the previous and /version /ver /icanhasbukkit
 commands:
-    plreload:
-        aliases: 
-          - plr
+    pluginlist:
         description: Display the plugin list.
 permissions:
-    pluginlist.*:
-        children:
-            pluginlist.user: true
-            pluginlist.real: true
-            pluginlist.version: true
-            pluginlist.reload: true
     pluginlist.user:
         description: Grants usage of /plugins /pl
         default: true
+    pluginlist.version:
+        description: Grants usage of /version /ver /icanhasbukkit
+        default: op
     pluginlist.real:
         description: Grants access to the true /plugins
         default: op
-    pluginlist.version:
-        description: Grants usage of /version /ver /icanhasbukkit    
+    pluginlist.*:
         default: op
-    pluginlist.reload:
-        description: Grants usage of /plreload
-        default: op
-        
-    
+        children:
+            pluginlist.user: true
+            pluginlist.hidden: true
+            pluginlist.version: true
